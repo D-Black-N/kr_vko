@@ -54,6 +54,8 @@ trap sigint_handler 2
 log_file="$LogDirectory/$subsystem_type.log" 																			# Директория для логов
 echo "Система $subsystem_type успешно инициализирована!" | base64 >> $log_file
 
+PulseInit $subsystem_type
+
 while :
 do
 	read_targets # Читаем цели из файла, результат в переменной targets
@@ -95,7 +97,7 @@ do
 					then
 						check_sector_coverage ${TargetsId[1+8*$cIdx]} ${TargetsId[2+8*$cIdx]}; dot1=$? 	# (1-я засечка)
 						check_sector_coverage ${XTarget} ${YTarget};  dot2=$?														# (2-я засечка)
-						if (($det1 == 1)) && (( $det2 == 1 ))																						# Если обе засечки
+						if (($dot1 == 1)) && (( $dot2 == 1 ))																						# Если обе засечки
 						then
 							TId=-1
 							if ((${TargetsId[3+8*$cIdx]} == 0 )) && ((${TargetsId[4+8*$cIdx]} == 0 ))		# Если скорости ещё не были определены	
@@ -152,4 +154,6 @@ do
 			fi
 		fi
 	done
+	Pulse $subsystem_type
+	RandomSleep
 done

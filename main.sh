@@ -4,7 +4,7 @@ TempDirectory="/tmp/GenTargets"
 LogDirectory="./logs"
 DirectoryTargets="$TempDirectory/Targets"
 DestroyDirectory="$TempDirectory/Destroy"
-PulseDirectory="./temp/pulse"
+PulseDirectory="temp/pulse"
 LogFile="$TempDirectory/GenTargets.log"
 
 declare -a RLS  # x y a r fov
@@ -145,17 +145,17 @@ function classify_target
 function PulseInit
 {
 	type="$1"
-	filename=$DirectoryComm/$type
-	echo "0" >$filename
+	pulse_file="$PulseDirectory/$type"
+	echo "0" >$pulse_file
 	case $type in
   "rls")
-		hbrls=0
+		pulse_rls=0
     ;;
   "spro")
-		hbspro=0
+		pulse_spro=0
     ;;
   "zrdn")
-		hbzrdn=0
+		pulse_zrdn=0
   esac
 }
 
@@ -166,15 +166,15 @@ function Pulse
 
 	case $type in
   "rls")
-		let hbrls+=1
-		echo "$hbrls" >$filename
+		let pulse_rls+=1
+		echo "$pulse_rls" >$pulse_file
     ;;
   "spro")
- 		let hbspro+=1
-		echo "$hbspro" >$filename
+ 		let pulse_spro+=1
+		echo "$pulse_spro" >$pulse_file
     ;;
   "zrdn")
-		let hbzrdn+=1
-		echo "$hbzrdn" >$filename
+		let pulse_zrdn+=1
+		echo "$pulse_zrdn" >$pulse_file
   esac
 }
