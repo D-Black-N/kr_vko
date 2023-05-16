@@ -52,3 +52,42 @@ SPRO[2+4*0]=1700
 SPRO[3+4*0]=10
 
 declare -a TargetsId 				# Массив для целей
+
+# Функция завершения работы системы
+sigint_handler() { echo "";echo "Завершение работы системы $SubsystemType" ; exit 0;} 
+
+function classify_target			# Функция классификации цели по скорости
+{
+  #0-ББ БР 1-Самолеты 2-Крылатые ракеты
+  speedX=$1		# Скорость по Х
+	speedY=$2		# скорость по Y
+	speed=$(echo "sqrt ( (($speedX*$speedX+$speedY*$speedY)) )" | bc)		# Определяем скорость как гипотенузу
+
+	if ((( $speed > 50 )) && (( $speed < 250 )))				# Если скорость 50-249, то Самолёт
+  then
+    return 1
+  fi
+
+	if ((( $speed > 249 )) && (( $speed < 1000 )))			# Если скорость 250-999, то К.ракета
+  then
+    return 2
+  fi
+
+  if ((( $speed > 7999 )) && (( $speed < 10000 )))		# Если скорость 8000-9999, то ББ БР
+  then
+    return 0
+  fi
+
+  return 100
+}
+
+function GetTargets				# Функция получения списка целей
+{
+	Targets=`ls -tr $DirectoryTargets 2>/dev/null | tail -n 25`	# Сортированные данные целей
+	result=$?
+	if (( $result != 0 ))
+	then
+		echo "Система не запущена!"
+		exit 0
+	fi
+}
