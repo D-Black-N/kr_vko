@@ -54,7 +54,7 @@ trap sigint_handler 2
 log_file="$LogDirectory/$subsystem_type.log" 																			# Директория для логов
 echo "Система ${subsystem_type}_${rls_id} успешно инициализирована!" | base64 >> $log_file
 
-pulse_init $subsystem_type
+pulse_init "${subsystem_type}_${rls_id}"
 
 # Функция завершения работы системы
 sigint_handler() { echo "";echo "Завершение работы системы ${subsystem_type}_${rls_id}" ; exit 0;} 
@@ -76,7 +76,7 @@ do
 				XTarget=`echo $target_file | cut -d',' -f 1 | cut -d'X' -f 2`;				# Разделяем координаты и записываем в переменные
 				YTarget=`echo $target_file | cut -d',' -f 2 | cut -d'Y' -f 2`;
 				check_new_target "$target_id"; idx=$?;															# Проверка на новую цель, возврат значения в переменной idx, если нашел, то id, если нет, то -1
-
+				
 				#-------------- Обработка цели --------------
 
 				if (( $idx == -1 ))																									# Запись новой цели в массив целей

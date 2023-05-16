@@ -24,7 +24,7 @@ trap sigint_handler 2
 log_file="$LogDirectory/$subsystem_type.log" 																			# Директория для логов
 echo "Система ${subsystem_type}_${zrdn_id} успешно инициализирована!" | base64 >> $log_file
 
-pulse_init $subsystem_type
+pulse_init "${subsystem_type}_${zrdn_id}"
 
 # Функция завершения работы системы
 sigint_handler() { echo "";echo "Завершение работы системы ${subsystem_type}_${zrdn_id}" ; exit 0;} 

@@ -11,7 +11,7 @@ rls_1_pid=$!; echo "Запуск РЛС 1 PID=$rls_1_pid"
 rls_2_pid=$!; echo "Запуск РЛС 2 PID=$rls_2_pid"
 
 # Старт системы СПРО
-./spro.sh
+./spro.sh &
 spro_pid=$!; echo "Запуск СПРО PID=$spro_pid"
 
 # Старт систем ЗРДН
