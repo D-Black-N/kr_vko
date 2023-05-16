@@ -142,7 +142,7 @@ function classify_target
 }
 
 # Метод инициализации пульса систем (для контроля жизни) 
-function PulseInit
+function pulse_init
 {
 	type="$1"
 	pulse_file="$PulseDirectory/$type"
@@ -160,7 +160,7 @@ function PulseInit
 }
 
 # Метод контроля пульса (для увеличения пульса на 1)
-function Pulse
+function pulse
 {
 	type="$1"
 
@@ -177,4 +177,77 @@ function Pulse
 		let pulse_zrdn+=1
 		echo "$pulse_zrdn" >$pulse_file
   esac
+}
+
+function processing_old_targets
+{
+  old=("${Targets[@]}")
+	if ((${#old_targets[@]} != 0))											# Если массив предыдущих целей не пуст, то ...
+	then
+		for target in $old_targets												# Проходим по прошлым целям
+		do
+			if [ "$target" ]
+			then
+				i=0
+				while (( "$i" < "${#Targets[@]}" ))				# Цикл по количеству элементов в массиве текущих целей
+				do
+					if [[ "$target" == "${Targets[$i]}" ]]	# Если в текущей выборке попался файл цели, который уже рассматривался в прошлый раз
+					then	
+						Targets[$i]="ERROR"										# Заменяем название этого файла на ERROR
+						break;
+					fi
+					let i+=1
+				done
+			fi
+		done
+	fi
+
+	((elem_count=${#TargetsId[@]}/8)) 							# Количество элементов в массиве целей
+	if (($elem_count > 0)) 												# Если есть известные цели (массив целей не пустой)
+	then
+		for target in $Targets												# Проходим по полученным от генератора целям
+		do
+			if [ "$target" ] && [ "$target" != "ERROR" ]
+			then 
+				IDTarget=`expr substr $target 13 6`;			# Получение ID цели
+				target_file=`cat $DirectoryTargets/$target 2>/dev/null`;result=$?;	# Читаем файл
+				if (( $result == 0 ))
+				then
+					XTarget=`echo $target_file | cut -d',' -f 1 | cut -d'X' -f 2`;		# Координата X цели
+					YTarget=`echo $target_file | cut -d',' -f 2 | cut -d'Y' -f 2`;		# Координата Y цели
+					i=0
+					while (( "$i" < "$elem_count" ))					# Цикл по количеству элементов в массиве целей
+					do
+						if [[ "${TargetsId[0+8*$i]}" == "$IDTarget" ]] && ((${TargetsId[6+8*$i]} == 1)) && (((TargetsId[1+8*$i]!=$XTarget)) || ((TargetsId[2+8*$i]!=$YTarget))) # Если мы стреляли по цели и её координаты изменились
+						then
+							date=`date +'%F %T'`
+							echo "-$date- Промах по цели ID:${TargetsId[0+8*$i]}" | base64  >> $log_file		# Выдаём сообщение о промахе и сбрасываем флаг того, что стреляли
+							let TargetsId[6+8*$i]=0
+							break;
+						fi
+						let i+=1
+					done
+				fi
+			fi
+		done
+
+		i=0
+		while (( "$i" < "$elem_count" ))			# Цикл по количеству элементов в массиве целей
+		do
+			if ((${TargetsId[6+8*$i]} == 1))		# Если после предыдущего цикла остались цели с установленным флагом, что по ним стреляли
+			then
+				date=`date +'%F %T'`
+				echo "-$date- Цель ID:${TargetsId[0+8*$i]} уничтожена" | base64  >>$log_file		# Выдаём сообщение об уничтожении и устанавливаем флаг "уничтожен"
+				let TargetsId[6+8*$i]=2
+			fi
+			let i+=1
+		done
+	fi
+
+	old_targets=$old												# Обновляем массив старых целей
+}
+
+function system_sleep
+{
+	sleep 0.8
 }

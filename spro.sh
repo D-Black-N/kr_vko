@@ -13,7 +13,7 @@ trap sigint_handler 2
 log_file="$LogDirectory/$subsystem_type.log" 																			# Директория для логов
 echo "Система $subsystem_type успешно инициализирована!" | base64 >> $log_file
 
-PulseInit $subsystem_type
+pulse_init $subsystem_type
 
 while :
 do
@@ -29,8 +29,8 @@ do
 			target_file=`cat $DirectoryTargets/$target 2>/dev/null`; result=$?;		# Читаем файл обрабатываемой цели для извлечения координат
 			if (( $result == 0 ))																									# Если данные были получены успешно, то ...
 			then
-				XTarget=`echo $readedfile | cut -d',' -f 1 | cut -d'X' -f 2`;				# Разделяем координаты и записываем в переменные
-				YTarget=`echo $readedfile | cut -d',' -f 2 | cut -d'Y' -f 2`;
+				XTarget=`echo $target_file | cut -d',' -f 1 | cut -d'X' -f 2`;				# Разделяем координаты и записываем в переменные
+				YTarget=`echo $target_file | cut -d',' -f 2 | cut -d'Y' -f 2`;
 				check_new_target "$target_id"; idx=$?;															# Проверка на новую цель, возврат значения в переменной idx, если нашел, то id, если нет, то -1
 
 				#-------------- Обработка цели --------------
@@ -71,7 +71,7 @@ do
 								if (( ${TargetsId[5+8*$cIdx]} == -1 ))					# Если до этого эту цель не идентифицировали
 								then 
 									date=`date +'%F %T'`
-									echo "-$date- $SubsystemType $i: Цель ID:${TargetsId[0+8*$cIdx]} обнаружена в (${TargetsId[1+8*$cIdx]}, ${TargetsId[2+8*$cIdx]}) и идентифицирована как Бал.блок (${TargetsId[3+8*$cIdx]}  ${TargetsId[4+8*$cIdx]})" | base64  >>$log_file 
+									echo "-$date- $subsystem_type $i: Цель ID:${TargetsId[0+8*$cIdx]} обнаружена в (${TargetsId[1+8*$cIdx]}, ${TargetsId[2+8*$cIdx]}) и идентифицирована как Бал.блок (${TargetsId[3+8*$cIdx]}  ${TargetsId[4+8*$cIdx]})" | base64  >>$log_file 
 									TargetsId[5+8*$cIdx]=${TId}	   								# Выдаём сообщение и устанавливаем идентификатор цели
 								fi
 								if ((${SPRO[3+4*0]} > 0)) && ((${TargetsId[6+8*$i]} == 0))		 								# Если есть чем стрелять
@@ -79,14 +79,14 @@ do
 									touch "$DestroyDirectory/${TargetsId[0+8*$cIdx]}"		# Стреляем, выводим сообщение и устанавливаем флаг того, что стреляли
 									let SPRO[3+4*0]-=1
 									date=`date +'%F %T'`
-									echo "-$date- $SubsystemType $i отстрелялась по цели ID:${TargetsId[0+8*$cIdx]}. Оставшийся боезапас: ${SPRO[3+4*0]})" | base64  >> $log_file
+									echo "-$date- $subsystem_type $i отстрелялась по цели ID:${TargetsId[0+8*$cIdx]}. Оставшийся боезапас: ${SPRO[3+4*0]})" | base64  >> $log_file
 									let TargetsId[6+8*$cIdx]=1
 								fi
 								if ((${SPRO[3+4*0]} == 0))			 								# Если боезапас исчерпан
 								then
 									let SPRO[3+4*0]-=1				 										# Переход в режим обнаружения			
 									date=`date +'%F %T'`										
-									echo "-$date- $SubsystemType $i: Боекомплект исчерпан! Переход в режим обнаружения." | base64  >> $log_file
+									echo "-$date- $subsystem_type $i: Боекомплект исчерпан! Переход в режим обнаружения." | base64  >> $log_file
 								fi
 							fi
             fi
@@ -97,6 +97,6 @@ do
       fi
     fi
   done
-  Pulse $subsystem_type
-	RandomSleep
+  pulse $subsystem_type
+	system_sleep
 done
