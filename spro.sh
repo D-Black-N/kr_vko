@@ -15,8 +15,10 @@ echo "Система $subsystem_type успешно инициализирова
 
 pulse_init $subsystem_type
 
+check_start
+
 # Функция завершения работы системы
-sigint_handler() { echo "";echo "Завершение работы системы ${subsystem_type}" ; exit 0;} 
+# sigint_handler() { echo "";echo "Завершение работы системы ${subsystem_type}" ; exit 0;}
 
 #-------------- Методы проверки нахождения цели в окружности -------------------
 

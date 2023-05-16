@@ -56,8 +56,10 @@ echo "Система ${subsystem_type}_${rls_id} успешно инициали
 
 pulse_init "${subsystem_type}_${rls_id}"
 
+check_start
+
 # Функция завершения работы системы
-sigint_handler() { echo "";echo "Завершение работы системы ${subsystem_type}_${rls_id}" ; exit 0;} 
+# sigint_handler() { echo "";echo "Завершение работы системы ${subsystem_type}_${rls_id}" ; exit 0;}
 
 while :
 do

@@ -17,7 +17,7 @@ fi
 
 target_number=0
 old_targets=0
-subsystem_type="spro"
+subsystem_type="zrdn"
 
 trap sigint_handler 2
 
@@ -26,8 +26,10 @@ echo "Система ${subsystem_type}_${zrdn_id} успешно инициал�
 
 pulse_init "${subsystem_type}_${zrdn_id}"
 
+check_start
+
 # Функция завершения работы системы
-sigint_handler() { echo "";echo "Завершение работы системы ${subsystem_type}_${zrdn_id}" ; exit 0;} 
+sigint_handler() { echo "";echo "Завершение работы системы ${subsystem_type}_${zrdn_id}" ; exit 0;}
 
 #-------------- Методы проверки нахождения цели в окружности -------------------
 

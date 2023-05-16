@@ -11,8 +11,7 @@ COUNTLINES=("-1" "-1" "-1" "-1")			# Массив для хранения кол
 source "main.sh" 2>/dev/null
 
 subsystem_type="kp"
-
-log_file="$DirectoryCommLog/kp.log"
+log_file="$LogDirectory/$subsystem_type.log"
 
 trap sigint_handler 2 		# Отлов сигнала остановки процесса. Если сигнал пойман, то вызывается функция ...
 
