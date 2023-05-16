@@ -23,3 +23,5 @@ function CheckStart			# Функция проверки возможности �
 	  exit 1
 	fi
 }
+
+sigint_handler() { echo "";echo "Завершение работы системы $SubsystemType" ; exit 0;} 
