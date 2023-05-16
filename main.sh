@@ -81,13 +81,100 @@ function classify_target			# Функция классификации цели 
   return 100
 }
 
-function GetTargets				# Функция получения списка целей
+# Функция получения списка целей
+function read_targets
 {
-	Targets=`ls -tr $DirectoryTargets 2>/dev/null | tail -n 25`	# Сортированные данные целей
+	targets=`ls -tr $DirectoryTargets 2>/dev/null | tail -n 25`	# Сортированные данные целей
 	result=$?
 	if (( $result != 0 ))
 	then
 		echo "Система не запущена!"
 		exit 0
 	fi
+}
+
+# Функция проверки на новизну цели (Если цель новая, возвращается -1, иначе возвращается индекс элемента)
+return_target_id=0;
+function check_new_target
+{
+  elem_size=8			                              # Количество характеристик одной цели
+  current_id="$2"					                      # Идентификатор цели
+
+  ((elem_count=${#TargetsId[@]}/elem_size));    # TargetsId - это массив целей, elem_size - количество характеристик одной цели
+  return_target_id=-1
+  i=0
+  while (( "$i" < "$elem_count" ))
+  do
+    if [[ "${TargetsId[0+$elem_size*$i]}" == "$current_id" ]]
+    then
+      return_target_id=$i
+      break;
+    fi
+    let i+=1
+  done
+  return $return_target_id
+}
+
+# Функция классификации цели по скорости
+function classify_target
+{
+  #0-ББ БР 1-Самолеты 2-Крылатые ракеты
+  speedX=$1		# Скорость по Х
+	speedY=$2		# скорость по Y
+	speed=$(echo "sqrt ( (($speedX*$speedX+$speedY*$speedY)) )" | bc)		# Определяем скорость как гипотенузу
+
+	if ((( $speed > 50 )) && (( $speed < 250 )))				# Если скорость 50-249, то Самолёт
+  then
+    return 1
+  fi
+
+	if ((( $speed > 249 )) && (( $speed < 1000 )))			# Если скорость 250-999, то К.ракета
+  then
+    return 2
+  fi
+
+  if ((( $speed > 7999 )) && (( $speed < 10000 )))		# Если скорость 8000-9999, то ББ БР
+  then
+    return 0
+  fi
+
+  return 100
+}
+
+# Метод инициализации пульса систем (для контроля жизни) 
+function PulseInit
+{
+	type="$1"
+	filename=$DirectoryComm/$type
+	echo "0" >$filename
+	case $type in
+  "rls")
+		hbrls=0
+    ;;
+  "spro")
+		hbspro=0
+    ;;
+  "zrdn")
+		hbzrdn=0
+  esac
+}
+
+# Метод контроля пульса (для увеличения пульса на 1)
+function Pulse
+{
+	type="$1"
+
+	case $type in
+  "rls")
+		let hbrls+=1
+		echo "$hbrls" >$filename
+    ;;
+  "spro")
+ 		let hbspro+=1
+		echo "$hbspro" >$filename
+    ;;
+  "zrdn")
+		let hbzrdn+=1
+		echo "$hbzrdn" >$filename
+  esac
 }
