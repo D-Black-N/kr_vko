@@ -53,9 +53,6 @@ SPRO[3+4*0]=10
 
 declare -a TargetsId 				# Массив для целей
 
-# Функция завершения работы системы
-sigint_handler() { echo "";echo "Завершение работы системы $SubsystemType" ; exit 0;} 
-
 function classify_target			# Функция классификации цели по скорости
 {
   #0-ББ БР 1-Самолеты 2-Крылатые ракеты

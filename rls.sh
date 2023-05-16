@@ -17,8 +17,8 @@ fi
 
 function check_sector_coverage
 {
-	local X=$1
-	local Y=$2
+	((X=$1/1000))
+	((Y=$2/1000))
 
 	((x1=-1*${RLS[0+5*$rls_id]}+$X))	# Получение координаты X относительно РЛС
 	((y1=-1*${RLS[1+5*$rls_id]}+$Y)) # Получение координаты Y относительно РЛС
@@ -55,6 +55,9 @@ log_file="$LogDirectory/$subsystem_type.log" 																			# Директо
 echo "Система ${subsystem_type}_${rls_id} успешно инициализирована!" | base64 >> $log_file
 
 pulse_init $subsystem_type
+
+# Функция завершения работы системы
+sigint_handler() { echo "";echo "Завершение работы системы ${subsystem_type}_${rls_id}" ; exit 0;} 
 
 while :
 do

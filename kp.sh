@@ -8,26 +8,19 @@ HBVARS=("-1" "-1" "-1")								# Массив для хранения значе
 LOGLINES=("0" "0" "0")								# Массив для хранения количества выведенных строк из лог файлов для систем
 COUNTLINES=("-1" "-1" "-1" "-1")			# Массив для хранения количества строк в логах, которые были записаны за 30 минут
 
-source "data.sh"
-source "methods.sh"
+source "main.sh" 2>/dev/null
 
-SubsystemType="КП"
-SubsystemLog="KP"
-NumberOfSystem=0
-SubsystemCanShoot=(0 0 0) # 0-ББ БР 1-Самолеты 2-Крылатые ракеты
+subsystem_type="kp"
 
-commfile="$DirectoryCommLog/kp.log"
-CheckStart
+log_file="$DirectoryCommLog/kp.log"
 
 trap sigint_handler 2 		# Отлов сигнала остановки процесса. Если сигнал пойман, то вызывается функция ...
 
 date=`date +'%F %T'`
 echo "-$date- Система $SubsystemType успешно инициализирована!"
-echo "-$date- Система $SubsystemType успешно инициализирована!" >>$commfile
+echo "-$date- Система $SubsystemType успешно инициализирована!" >>$log_file
 
 sltime=0;
-
-#-------------- Секция работы КП --------------
 
 while :
 do

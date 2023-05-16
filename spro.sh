@@ -15,6 +15,28 @@ echo "Система $subsystem_type успешно инициализирова
 
 pulse_init $subsystem_type
 
+# Функция завершения работы системы
+sigint_handler() { echo "";echo "Завершение работы системы ${subsystem_type}" ; exit 0;} 
+
+#-------------- Методы проверки нахождения цели в окружности -------------------
+
+function check_circle_coverage
+{
+	((X=$1/1000))
+	((Y=$2/1000))
+
+	((x1=-1*${SPRO[0+3*0]}+$X))                          # Получение координаты X относительно СПРО
+	((y1=-1*${SPRO[1+3*0]}+$Y))                          # Получение координаты Y относительно СПРО
+	
+	local r1=$(echo "sqrt ( (($x1*$x1+$y1*$y1)) )" | bc)  # Высчитываем расстояние цели до РЛС
+
+	if [ "$r1" -le "${SPRO[2+3*0]}" ]                    # Если расстояние меньше радиуса обзора
+	then
+	  return 1
+	fi
+	return 0  # Возвращаем 0, если цель не попала в обзор
+}
+
 while :
 do
   read_targets # Читаем цели из файла, результат в переменной targets
@@ -54,8 +76,8 @@ do
 
           if (( ${TargetsId[1+8*$cIdx]} != ${XTarget} )) || (( ${TargetsId[2+8*$cIdx]} != ${YTarget} )) # Если координаты изменились, то ...
 					then
-						check_sector_coverage ${TargetsId[1+8*$cIdx]} ${TargetsId[2+8*$cIdx]}; dot1=$? 	# (1-я засечка)
-						check_sector_coverage ${XTarget} ${YTarget};  dot2=$?														# (2-я засечка)
+						check_circle_coverage ${TargetsId[1+8*$cIdx]} ${TargetsId[2+8*$cIdx]}; dot1=$? 	# (1-я засечка)
+						check_circle_coverage ${XTarget} ${YTarget};  dot2=$?														# (2-я засечка)
 						if (($dot1 == 1)) && (( $dot2 == 1 ))																						# Если обе засечки
 						then
 							TId=-1
