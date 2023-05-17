@@ -13,6 +13,8 @@ then
 	exit 1
 fi
 
+check_start
+
 #-------------- Инициализация параметров систем --------------
 
 target_number=0
@@ -25,11 +27,6 @@ log_file="$LogDirectory/$subsystem_type.log" 																			# Директо
 echo "Система ${subsystem_type}_${zrdn_id} успешно инициализирована!" | base64 >> $log_file
 
 pulse_init "${subsystem_type}_${zrdn_id}"
-
-check_start
-
-# Функция завершения работы системы
-sigint_handler() { echo "";echo "Завершение работы системы ${subsystem_type}_${zrdn_id}" ; exit 0;}
 
 #-------------- Методы проверки нахождения цели в окружности -------------------
 

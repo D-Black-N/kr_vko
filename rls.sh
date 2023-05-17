@@ -13,6 +13,8 @@ then
 	exit 1
 fi
 
+check_start
+
 #-------------- Методы проверки нахождения цели в секторе -------------------
 
 function check_sector_coverage
@@ -55,8 +57,6 @@ log_file="$LogDirectory/$subsystem_type.log" 																			# Директо
 echo "Система ${subsystem_type}_${rls_id} успешно инициализирована!" | base64 >> $log_file
 
 pulse_init "${subsystem_type}_${rls_id}"
-
-check_start
 
 # Функция завершения работы системы
 # sigint_handler() { echo "";echo "Завершение работы системы ${subsystem_type}_${rls_id}" ; exit 0;}

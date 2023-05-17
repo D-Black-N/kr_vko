@@ -3,31 +3,31 @@
 source "helper.sh" 2>/dev/null
 
 # Старт систем РЛС
-./rls.sh 0 &
+bash rls.sh 0 &
 rls_0_pid=$!; echo "Запуск РЛС 0 PID=$rls_0_pid"
 
-./rls.sh 1 &
+bash rls.sh 1 &
 rls_1_pid=$!; echo "Запуск РЛС 1 PID=$rls_1_pid"
 
-./rls.sh 2 &
+bash rls.sh 2 &
 rls_2_pid=$!; echo "Запуск РЛС 2 PID=$rls_2_pid"
 
 # Старт системы СПРО
-./spro.sh &
+bash spro.sh &
 spro_pid=$!; echo "Запуск СПРО PID=$spro_pid"
 
 # Старт систем ЗРДН
-./zrdn.sh 0 &
+bash zrdn.sh 0 &
 zrdn_0_pid=$!; echo "Запуск ЗРДН 0 PID=$zrdn_0_pid"
 
-./zrdn.sh 1 &
+bash zrdn.sh 1 &
 zrdn_1_pid=$!; echo "Запуск ЗРДН 1 PID=$zrdn_1_pid"
 
-./zrdn.sh 2 &
+bash zrdn.sh 2 &
 zrdn_2_pid=$!; echo "Запуск ЗРДН 2 PID=$zrdn_2_pid"
 
 # Старт работы КП
-./kp.sh &
+bash kp.sh
 kp_pid=$!; echo "Запуск КП PID=$kp_pid"
 
 echo "Завершение работы подсистемы РЛС 0"; disown $rls_0_pid; kill -9 $rls_0_pid 2>/dev/null;
