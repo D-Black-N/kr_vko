@@ -33,7 +33,7 @@ do
 		i=0
 		while (( $i < 3 ))		# Цикл по подсистемам
 		do
-			lines=`wc -l "$DirectoryCommLog/${SYSTEMS[$i]}.log" 2>/dev/null`; res=$? 	# Получаем строку с количеством строк в лог файле и с названием этого файла
+			lines=`wc -l "$LogDirectory/${SYSTEMS[$i]}.log" 2>/dev/null`; res=$? 	# Получаем строку с количеством строк в лог файле и с названием этого файла
 			if (( res == 0 ))																													# Если количество строк удалось получить, то ...
 			then
 				count=($lines)																													# Получаем массив из строки
@@ -42,11 +42,11 @@ do
 				LOGLINES[$i]=$count																											# Определяем количество уже выведенных строк
 				if (( $LinesToDisplay > 0))																							# Если количество строк строк, которое нужно вывести, больше нуля, то ...
 				then
-					readedfile=`tail -n $LinesToDisplay $DirectoryCommLog/${SYSTEMS[$i]}.log 2>/dev/null`;result=$?		# Считываем строки, которые нужно вывести
+					readedfile=`tail -n $LinesToDisplay $LogDirectory/${SYSTEMS[$i]}.log 2>/dev/null`;result=$?		# Считываем строки, которые нужно вывести
 					if (( $result == 0 ))																									# Если удалось считать, то ...
 					then
 						echo "$readedfile" | base64 -d																			# выводим декодированные строки
-						echo "$readedfile" | base64 -d >> $commfile
+						echo "$readedfile" | base64 -d >> $log_file
 					fi
 				fi
 			fi
@@ -68,12 +68,12 @@ do
 				if (( ${HBVARS[$i]} == $readedfile))				# Если значение пульса не изменилось по сравнению с предыдущим, то ...
 				then
 					echo "  -$date- Система ${SYSTEMSDESCR[$i]} зависла"
-					echo "  -$date- Система ${SYSTEMSDESCR[$i]} зависла" >>$commfile
+					echo "  -$date- Система ${SYSTEMSDESCR[$i]} зависла" >>$log_file
 				fi
 				HBVARS[$i]=$readedfile
 			else
 				echo "  -$date- Ошибка доступа к cиcтеме ${SYSTEMSDESCR[$i]}"
-				echo "  -$date- Ошибка доступа к cиcтеме ${SYSTEMSDESCR[$i]}" >>$commfile
+				echo "  -$date- Ошибка доступа к cиcтеме ${SYSTEMSDESCR[$i]}" >>$log_file
 			fi
 			let i+=1
 		done
@@ -86,7 +86,7 @@ do
 		i=0
 		while (( $i < 4 ))
 		do
-			lines=`wc -l "$DirectoryCommLog/${SYSTEMS[$i]}.log" 2>/dev/null`; res=$?		# Получаем количество строк в лог файле
+			lines=`wc -l "$LogDirectory/${SYSTEMS[$i]}.log" 2>/dev/null`; res=$?		# Получаем количество строк в лог файле
 			if (( res == 0 ))																														# Если количество строк удалось получить, то
 			then
 				count=($lines)																														# Получаем массив ищ строки с информацией о количестве строк

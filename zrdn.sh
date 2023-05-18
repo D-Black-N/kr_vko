@@ -53,10 +53,14 @@ do
 
 	#-------------- Проверка на промахи и попадания по целям --------------
 
+	processing_old_targets
+
+	#-------------- Проверка на промахи и попадания по целям --------------
+
 	# Проходим по полученным от генератора целям
 	for target in $targets
 	do
-		if [ "$target" ]
+		if [ "$target" ] && [ "$target" != "ERROR" ]
 		then
 			target_id=`expr substr $target 13 6`;																	# Извлекаем ID цели из названия файла
 			target_file=`cat $DirectoryTargets/$target 2>/dev/null`; result=$?;		# Читаем файл обрабатываемой цели для извлечения координат
@@ -64,7 +68,8 @@ do
 			then
 				XTarget=`echo $target_file | cut -d',' -f 1 | cut -d'X' -f 2`;				# Разделяем координаты и записываем в переменные
 				YTarget=`echo $target_file | cut -d',' -f 2 | cut -d'Y' -f 2`;
-				check_new_target "$target_id"; idx=$?;															# Проверка на новую цель, возврат значения в переменной idx, если нашел, то id, если нет, то -1
+				check_new_target "$target_id"
+				idx=$return_target_id;																							# Проверка на новую цель, возврат значения в переменной idx, если нашел, то id, если нет, то -1
 
 				#-------------- Обработка цели --------------
 
@@ -115,17 +120,17 @@ do
 										esac
 									fi
 									i_n=$((${i}-1))
-									if ((${ZRDN[3+4*$i_n]} > 0)) && ((${TargetsId[6+8*$i]} == 0))			# Если есть чем стрелять
+									if ((${ZRDN[3+4*$zrdn_id]} > 0)) && ((${TargetsId[6+8*$cIdx]} == 0))			# Если есть чем стрелять
 									then
 										touch "$DestroyDirectory/${TargetsId[0+8*$cIdx]}"		# Стреляем, выводим сообщение и устанавливаем флаг того, что стреляли
-										let ZRDN[3+4*$i_n]-=1
+										let ZRDN[3+4*$zrdn_id]-=1
 										date=`date +'%F %T'`
 										echo "-$date- ${subsystem_type}_${zrdn_id} отстрелялась по цели ID:${TargetsId[0+8*$cIdx]}. Оставшийся боезапас: ${ZRDN[3+4*$i_n]})" | base64  >> $log_file
 										let TargetsId[6+8*$cIdx]=1
 									fi
-									if ((${ZRDN[3+4*$i_n]} == 0))			 							# Если боезапас исчерпан
+									if ((${ZRDN[3+4*$zrdn_id]} == 0))			 							# Если боезапас исчерпан
 									then
-										let ZRDN[3+4*$i_n]-=1				 									# Переход в режим обнаружения	
+										let ZRDN[3+4*$zrdn_id]-=1				 									# Переход в режим обнаружения	
 										date=`date +'%F %T'`												
 										echo "-$date- ${subsystem_type}_${zrdn_id}: Боекомплект исчерпан! Переход в режим обнаружения." | base64  >> $log_file
 									fi

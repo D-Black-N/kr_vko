@@ -99,7 +99,7 @@ return_target_id=0;
 function check_new_target
 {
   elem_size=8			                              # Количество характеристик одной цели
-  current_id="$2"					                      # Идентификатор цели
+  current_id="$1"					                      # Идентификатор цели
 
   ((elem_count=${#TargetsId[@]}/elem_size));    # TargetsId - это массив целей, elem_size - количество характеристик одной цели
   return_target_id=-1
@@ -113,7 +113,6 @@ function check_new_target
     fi
     let i+=1
   done
-  return $return_target_id
 }
 
 # Функция классификации цели по скорости

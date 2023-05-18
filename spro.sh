@@ -44,9 +44,13 @@ do
 
 	#-------------- Проверка на промахи и попадания по целям --------------
 
+	processing_old_targets
+
+	#-------------- Проверка на промахи и попадания по целям --------------
+
 	for target in $targets
 	do
-		if [ "$target" ]
+		if [ "$target" ] && [ "$target" != "ERROR" ]
 		then
 			target_id=`expr substr $target 13 6`;																	# Извлекаем ID цели из названия файла
 			target_file=`cat $DirectoryTargets/$target 2>/dev/null`; result=$?;		# Читаем файл обрабатываемой цели для извлечения координат
@@ -54,7 +58,8 @@ do
 			then
 				XTarget=`echo $target_file | cut -d',' -f 1 | cut -d'X' -f 2`;				# Разделяем координаты и записываем в переменные
 				YTarget=`echo $target_file | cut -d',' -f 2 | cut -d'Y' -f 2`;
-				check_new_target "$target_id"; idx=$?;															# Проверка на новую цель, возврат значения в переменной idx, если нашел, то id, если нет, то -1
+				check_new_target "$target_id"
+				idx=$return_target_id;																							# Проверка на новую цель, возврат значения в переменной idx, если нашел, то id, если нет, то -1
 
 				#-------------- Обработка цели --------------
 
