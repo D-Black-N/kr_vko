@@ -2,9 +2,10 @@
 
 #-------------- Секция инициализации --------------
 
-SYSTEMS=("rls" "zrdn" "spro" "kp")		# Массив с именами файлов систем
+SYSTEMS=("rls_0" "rls_1" "rls_2" "zrdn_0" "zrdn_1" "zrdn_2" "spro" "kp")		# Массив с именами файлов систем
+BASE_SYSTEMS=("rls" "zrdn" "spro" "kp")		# Массив с именами файлов систем
 SYSTEMSDESCR=("РЛС" "ЗРДН" "СПРО")		# Массив систем для вывода в логи
-HBVARS=("-1" "-1" "-1")								# Массив для хранения значений пульса систем
+HBVARS=("-1" "-1" "-1" "-1" "-1" "-1" "-1")								# Массив для хранения значений пульса систем
 LOGLINES=("0" "0" "0")								# Массив для хранения количества выведенных строк из лог файлов для систем
 COUNTLINES=("-1" "-1" "-1" "-1")			# Массив для хранения количества строк в логах, которые были записаны за 30 минут
 
@@ -16,8 +17,8 @@ log_file="$LogDirectory/$subsystem_type.log"
 trap sigint_handler 2 		# Отлов сигнала остановки процесса. Если сигнал пойман, то вызывается функция ...
 
 date=`date +'%F %T'`
-echo "-$date- Система $SubsystemType успешно инициализирована!"
-echo "-$date- Система $SubsystemType успешно инициализирована!" >>$log_file
+echo "-$date- Система $subsystem_type успешно инициализирована!"
+echo "-$date- Система $subsystem_type успешно инициализирована!" >>$log_file
 
 sltime=0;
 
@@ -33,7 +34,7 @@ do
 		i=0
 		while (( $i < 3 ))		# Цикл по подсистемам
 		do
-			lines=`wc -l "$LogDirectory/${SYSTEMS[$i]}.log" 2>/dev/null`; res=$? 	# Получаем строку с количеством строк в лог файле и с названием этого файла
+			lines=`wc -l "$LogDirectory/${BASE_SYSTEMS[$i]}.log" 2>/dev/null`; res=$? 	# Получаем строку с количеством строк в лог файле и с названием этого файла
 			if (( res == 0 ))																													# Если количество строк удалось получить, то ...
 			then
 				count=($lines)																													# Получаем массив из строки
@@ -42,7 +43,7 @@ do
 				LOGLINES[$i]=$count																											# Определяем количество уже выведенных строк
 				if (( $LinesToDisplay > 0))																							# Если количество строк строк, которое нужно вывести, больше нуля, то ...
 				then
-					readedfile=`tail -n $LinesToDisplay $LogDirectory/${SYSTEMS[$i]}.log 2>/dev/null`;result=$?		# Считываем строки, которые нужно вывести
+					readedfile=`tail -n $LinesToDisplay $LogDirectory/${BASE_SYSTEMS[$i]}.log 2>/dev/null`;result=$?		# Считываем строки, которые нужно вывести
 					if (( $result == 0 ))																									# Если удалось считать, то ...
 					then
 						echo "$readedfile" | base64 -d																			# выводим декодированные строки
@@ -59,21 +60,21 @@ do
   if (( sltime%30 == 0))				# Если счётчик кратен 2м, то ...
 	then
 		i=0
-		while (( $i < 3 ))					# Цикл по подсистемам
+		while (( $i < 7 ))					# Цикл по подсистемам
 		do
-			readedfile=`tail $DirectoryComm/${SYSTEMS[$i]} 2>/dev/null`; result=$?	# Получаем значение пульса из файла
+			readedfile=`tail $PulseDirectory/${SYSTEMS[$i]} 2>/dev/null`; result=$?	# Получаем значение пульса из файла
 			date=`date +'%F %T'`
 			if (( $result == 0 ))
 			then
 				if (( ${HBVARS[$i]} == $readedfile))				# Если значение пульса не изменилось по сравнению с предыдущим, то ...
 				then
-					echo "  -$date- Система ${SYSTEMSDESCR[$i]} зависла"
-					echo "  -$date- Система ${SYSTEMSDESCR[$i]} зависла" >>$log_file
+					echo "  -$date- Система ${SYSTEMS[$i]} зависла"
+					echo "  -$date- Система ${SYSTEMS[$i]} зависла" >> $log_file
 				fi
 				HBVARS[$i]=$readedfile
 			else
-				echo "  -$date- Ошибка доступа к cиcтеме ${SYSTEMSDESCR[$i]}"
-				echo "  -$date- Ошибка доступа к cиcтеме ${SYSTEMSDESCR[$i]}" >>$log_file
+				echo "  -$date- Ошибка доступа к cиcтеме ${SYSTEMS[$i]}"
+				echo "  -$date- Ошибка доступа к cиcтеме ${SYSTEMS[$i]}" >>$log_file
 			fi
 			let i+=1
 		done

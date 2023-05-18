@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source "helper.sh" 2>/dev/null
-
 # Старт систем РЛС
 bash rls.sh 0 &
 rls_0_pid=$!; echo "Запуск РЛС 0 PID=$rls_0_pid"
@@ -29,6 +27,8 @@ zrdn_2_pid=$!; echo "Запуск ЗРДН 2 PID=$zrdn_2_pid"
 # Старт работы КП
 bash kp.sh
 kp_pid=$!; echo "Запуск КП PID=$kp_pid"
+
+
 
 echo "Завершение работы подсистемы РЛС 0"; disown $rls_0_pid; kill -9 $rls_0_pid 2>/dev/null;
 echo "Завершение работы подсистемы РЛС 1"; disown $rls_1_pid 2>/dev/null; kill -9 $rls_1_pid 2>/dev/null;

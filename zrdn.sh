@@ -119,13 +119,12 @@ do
 											;;
 										esac
 									fi
-									i_n=$((${i}-1))
 									if ((${ZRDN[3+4*$zrdn_id]} > 0)) && ((${TargetsId[6+8*$cIdx]} == 0))			# Если есть чем стрелять
 									then
 										touch "$DestroyDirectory/${TargetsId[0+8*$cIdx]}"		# Стреляем, выводим сообщение и устанавливаем флаг того, что стреляли
 										let ZRDN[3+4*$zrdn_id]-=1
 										date=`date +'%F %T'`
-										echo "-$date- ${subsystem_type}_${zrdn_id} отстрелялась по цели ID:${TargetsId[0+8*$cIdx]}. Оставшийся боезапас: ${ZRDN[3+4*$i_n]})" | base64  >> $log_file
+										echo "-$date- ${subsystem_type}_${zrdn_id} отстрелялась по цели ID:${TargetsId[0+8*$cIdx]}. Оставшийся боезапас: ${ZRDN[3+4*$zrdn_id]})" | base64  >> $log_file
 										let TargetsId[6+8*$cIdx]=1
 									fi
 									if ((${ZRDN[3+4*$zrdn_id]} == 0))			 							# Если боезапас исчерпан
